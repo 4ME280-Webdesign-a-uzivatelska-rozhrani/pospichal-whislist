@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Wishlist</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .gift { border: 1px solid #ccc; margin-bottom: 20px; padding: 10px; border-radius: 8px; }
+    img { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <h1>Můj wishlist</h1>
+  <div id="wishlist"></div>
+
+  <script>
+    const BIN_ID = "TVŮJ_BIN_ID";
+    const API_KEY = "TVŮJ_X_MASTER_KEY";
+
+    async function loadWishlist() {
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: {
+          "X-MASTER-KEY": API_KEY
+        }
+      });
+      const data = await response.json();
+      const gifts = data.record;
+
+      const container = document.getElementById('wishlist');
+      container.innerHTML = '';
+
+      gifts.forEach((gift, index) => {
+        const div = document.createElement('div');
+        div.className = 'gift';
+        div.innerHTML = `
+          <h2>${gift.name}</h2>
+          <img src="${gift.image}" alt="${gift.name}">
+          <p><a href="${gift.url}" target="_blank">Zobrazit produkt</a></p>
+          <p>Cena: ${gift.price}</p>
+          <p>Rezervováno: <strong>${gift.reserved_by || 'nikým'}</strong></p>
+          <input type="text" id="name-${index}" placeholder="Tvé jméno">
+          <button onclick="reserveGift(${index})">Rezervovat</button>
+        `;
+        container.appendChild(div);
+      });
+
+      window.currentGifts = gifts;
+    }
+
+    async function reserveGift(index) {
+      const name = document.getElementById(`name-${index}`).value.trim();
+      if (!name) return alert("Zadej své jméno!");
+
+      window.currentGifts[index].reserved_by = name;
+
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-MASTER-KEY": API_KEY
+        },
+        body: JSON.stringify(window.currentGifts)
+      });
+
+      if (response.ok) {
+        alert("Rezervace uložena!");
+        loadWishlist();
+      } else {
+        alert("Nepodařilo se uložit rezervaci.");
+      }
+    }
+
+    loadWishlist();
+  </script>
+</body>
+</html>
