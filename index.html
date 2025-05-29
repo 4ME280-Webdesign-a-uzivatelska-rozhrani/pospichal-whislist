@@ -2,14 +2,16 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wishlist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wishlist s obrázky</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 2rem; background: #f9f9f9; }
-    .gift { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; background: #fff; }
+    body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 2rem; background: #f9f9f9; }
+    .gift { border: 1px solid #ccc; padding: 1rem; margin-bottom: 2rem; border-radius: 8px; background: #fff; display: flex; gap: 1rem; }
+    .gift img { width: 150px; height: auto; border-radius: 6px; object-fit: contain; }
+    .gift-info { flex: 1; }
     input[type="text"] { padding: 0.5rem; width: 60%; }
     button { padding: 0.5rem 1rem; margin-left: 0.5rem; }
-    .reserved { color: green; font-weight: bold; }
+    .reserved { color: green; font-weight: bold; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -38,14 +40,17 @@
         div.className = 'gift';
 
         div.innerHTML = `
-          <h3>${item.name}</h3>
-          <p><a href="${item.url}" target="_blank">Odkaz na produkt</a></p>
-          <p><strong>Cena:</strong> ${item.price}</p>
-          <p class="reserved">${item.reservedBy ? `Zamluveno: ${item.reservedBy}` : 'Nezamluveno'}</p>
-          ${!item.reservedBy ? `
-            <input type="text" placeholder="Tvé jméno" id="name-${index}" />
-            <button onclick="reserveGift(${index})">Zamluvit</button>
-          ` : ''}
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="gift-info">
+            <h3>${item.name}</h3>
+            <p><a href="${item.url}" target="_blank">Odkaz na produkt</a></p>
+            <p><strong>Cena:</strong> ${item.price}</p>
+            <p class="reserved">${item.reservedBy ? `Zamluveno: ${item.reservedBy}` : 'Nezamluveno'}</p>
+            ${!item.reservedBy ? `
+              <input type="text" placeholder="Tvé jméno" id="name-${index}" />
+              <button onclick="reserveGift(${index})">Zamluvit</button>
+            ` : ''}
+          </div>
         `;
 
         container.appendChild(div);
